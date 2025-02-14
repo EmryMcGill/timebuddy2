@@ -7,10 +7,10 @@
 }
 
 :root {
-  --blue: #35A6EF;
-  --blue-tint: #3299de;
-  --text-primary: black;
-  --bg-primary: #e6ebf0;
+  --blue: #E0A82E;
+  --blue-tint: #d5a02c;
+  --text-primary: #333333;
+  --bg-primary: #E6E6E6;
   --bg-primary-tint: #d4d8dc;
   --bg-secondary: white;
   --error: tomato;
@@ -35,17 +35,24 @@ body {
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 500;
 }
 
 h2 {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 500;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 400;
 }
 
 .page {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: var(--bg-primary);
   min-height: 100vh;
 }
@@ -90,6 +97,7 @@ button {
   border: none;
   font-family: var(--font);
   background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 @media (hover:hover) {
@@ -106,23 +114,6 @@ button {
   width: 100%;
   border-radius: var(--br);
   background-color: var(--bg-primary);
-}
-
-.btn_icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  height: fit-content;
-  padding: 0.3rem;
-  border-radius: var(--br);
-  background-color: transparent;
-}
-
-@media (hover:hover) {
-  .btn_icon:hover {
-    background-color: var(--bg-primary-tint);
-  }
 }
 
 .input_label {

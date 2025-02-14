@@ -17,7 +17,7 @@ export const PbProvider = ({ children }) => {
     useEffect(() => {
         if (pb.authStore.isValid) {
             // refresh auth token
-            pb.collection("users").authRefresh();
+            //pb.collection("users").authRefresh();
         }
         
         // listen for changes to the authStore state

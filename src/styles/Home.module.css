@@ -1,0 +1,58 @@
+.top_container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    padding: 1rem;
+}
+
+.btn_icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: var(--br);
+}
+
+.timer {
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 2rem;
+    font-size: 96px;
+    font-weight: 350 !important;
+}
+
+.btn_start {
+    background-color: var(--blue);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 20px;
+    border-radius: var(--br);
+}
+
+.btn_start:hover {
+    background-color: var(--blue-tint);
+}
+
+.projects_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 60%;
+    margin-top: 2rem;
+}
+
+.btn_add_project {
+    width: fit-content;
+    background: none;
+    font-size: 16px;
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: var(--br);
+}

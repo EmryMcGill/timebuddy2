@@ -58,9 +58,9 @@ const Signup = () => {
     return (
         <div className={`${styles.page} page`}>
             <div className={styles.content}>
-                <h1>App Name</h1>
+                <h1>Time Buddy</h1>
                 <div className={`card`}>
-                    <h1 style={{width: "100%"}}>Sign up</h1>
+                    <h2 style={{width: "100%"}}>Sign up</h2>
                     
                     <button onClick={googleAuth} className={`${styles.btn_google} btn_large`}>
                         Continue with Google

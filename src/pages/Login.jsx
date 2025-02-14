@@ -50,9 +50,9 @@ const Login = () => {
     return (
         <div className={`${styles.page} page`}>
             <div className={styles.content}>
-                <h1>App Name</h1>
+                <h1>Time Buddy</h1>
                 <div className={`card`}>
-                    <h1 style={{width: "100%"}}>Login</h1>
+                    <h2 style={{width: "100%"}}>Login</h2>
                     <button className={`${styles.btn_google} btn_large`}>
                         Continue with Google
                     </button>
