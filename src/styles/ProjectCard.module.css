@@ -9,12 +9,14 @@
 }
 
 .card:hover {
-    cursor: pointer;
-    
     border: 2px solid #888888;
 }
 
 .card_active {
+    border: 2px solid var(--text-primary);
+}
+
+.card_active:hover {
     border: 2px solid var(--text-primary);
 }
 
@@ -25,7 +27,7 @@
     padding: 0.7rem;
     border-radius: var(--br);
     background: none;
-    border-radius: 50%;
+    border-radius: var(--br);
 }
 
 .btn_icon:hover {

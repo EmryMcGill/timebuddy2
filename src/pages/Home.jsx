@@ -5,17 +5,26 @@ import { IoStatsChart } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 // component import 
 import ProjectCard from "../components/ProjectCard";
+import ProfileModal from "../components/ProfileModal";
+import { useState } from "react";
 
 const Home = () => {
+    const [profileModal, setProfileModal] = useState(true);
+
     return (
         <div className='page'>
+            
             <div className={styles.top_container}>
                 <button className={styles.btn_icon}>
                     <IoStatsChart size={'2rem'} />
                 </button>
-                <button className={styles.btn_icon}>
-                    <CgProfile size={'2rem'} />
-                </button>
+                
+                <div style={{position: 'relative'}}>
+                    <button className={styles.btn_icon}>
+                        <CgProfile size={'2rem'} onClick={() => setProfileModal(!profileModal)} />
+                    </button>
+                    {profileModal ? <ProfileModal closeModal={() => setProfileModal(false)} /> : ''}
+                </div>
             </div>
 
             <h1 className={styles.timer}>05:32</h1>
