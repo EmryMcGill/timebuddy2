@@ -1,33 +1,44 @@
 //style imports
 import styles from "../styles/ProfileModal.module.css";
 // package imports
-import { CgProfile } from "react-icons/cg";
-import { PiCrownSimpleFill } from "react-icons/pi";
-import { IoSettingsSharp } from "react-icons/io5";
-import { useRef, useEffect } from "react";
+import { useState } from "react";
+// component imports
+import Switch from "./Switch";
+import defaultAvatar from '../../public/default_avatar.webp'
 
-const ProfileModal = ({ closeModal }) => {
+const ProfileModal = ({ closeModal, logout }) => {
+    const [autoBreak, setAutoBreak] = useState(false);
 
-    const menuRef = useRef(null);
+    const handleDoneClick = () => {
+        // make changes
+        // TODO
 
-    // Close the menu when clicking outside
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                closeModal();
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+        // close modal
+        closeModal();
+    }
 
     return (
-        <div className={styles.card} ref={menuRef}>
-            <button className={styles.btn}><CgProfile /> Account</button>
-            <button className={styles.btn}><PiCrownSimpleFill /> Premium</button>
-            <button className={styles.btn}><IoSettingsSharp /> Settings</button>
-        </div>
+        <>
+            <div onClick={closeModal} className='overlay'></div>
+            
+            <div className={styles.card}>
+                <h2>Account</h2>
+
+                <div className={styles.content_container}>
+                    <img className={styles.img} src={defaultAvatar} />
+
+                    <div className={styles.input_container}>
+                        <h3>Name</h3>
+                        <input className={styles.inp} type="text" />
+                    </div>
+                </div>
+
+                <div className={styles.btn_container}>
+                    <button onClick={logout} className={styles.btn_logout}>Logout</button>
+                    <button onClick={handleDoneClick} className={styles.btn}>Done</button>
+                </div>
+            </div>
+        </>
     );
 }
 

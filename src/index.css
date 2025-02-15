@@ -128,6 +128,7 @@ button {
 }
 
 input[type="text"],
+input[type="number"],
 input[type="email"],
 input[type="password"] {
   font-size: 16px;
@@ -139,11 +140,12 @@ input[type="password"] {
 }
 
 input[type="text"]:focus,
+input[type="number"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus {
   outline: none;
   border-radius: var(--br);
-  box-shadow: 0 0 0 2px #6e6e6e;
+  box-shadow: 0 0 0 2px var(--text-primary);
 }
 
 a {
