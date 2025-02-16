@@ -12,13 +12,31 @@ export const PbProvider = ({ children }) => {
 
     // define user
     const [user, setUser] = useState(pb.authStore.record);
-    const [token, setToken] = useState(pb.authStore.token)
+    const [token, setToken] = useState(pb.authStore.token);
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (pb.authStore.isValid) {
-            // refresh auth token
-            //pb.collection("users").authRefresh();
-        }
+        // init projects
+        getProjects().then(() => setLoading(false));
+
+        /*pb.collection('projects').subscribe('*', async function (e) { 
+            setProjects(oldProjects => {
+                // update projects
+                if (e.action === "create") {
+                    return [e.record, ...oldProjects];
+                }
+                if (e.action === "update") {
+                    return oldProjects.map(project => 
+                        project.id === e.record.id ? e.record : project
+                    );
+                }
+                if (e.action === "delete") {
+                    return oldProjects.filter(project => project.id !== e.record.id);
+                }
+                return oldProjects;
+            });
+        }, {});*/
         
         // listen for changes to the authStore state
         const unsubscribe = pb.authStore.onChange((token, record) => {
@@ -77,6 +95,36 @@ export const PbProvider = ({ children }) => {
         }
     }
 
+    // ====== Projects ========
+
+    const getProjects = async () => {
+        try {
+            const res = await pb.collection('projects').getFullList();
+            setProjects([...res]);
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
+    }
+
+    const createProject = async (title) => {
+        if (!title) {
+            return null;
+        }
+
+        try {
+            return await pb.collection('projects').create({
+                title: title,
+                user: user.id
+            });
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
+    }
+
     return (
         <PbContext.Provider value={{ 
             user,
@@ -84,6 +132,9 @@ export const PbProvider = ({ children }) => {
             login,
             logout,
             signup,
+            createProject,
+            projects,
+            loading
          }}>
         {children}
         </PbContext.Provider>

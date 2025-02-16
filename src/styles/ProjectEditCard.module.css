@@ -1,0 +1,44 @@
+.card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 0.7rem;
+    border-radius: var(--br);
+    border: 2px solid white;
+    z-index: 3;
+}
+
+.inp {
+    background: none;
+    border: none !important;
+    font-size: 24px !important;
+    font-weight: 500 !important;
+    color: var(--text-primary);
+    padding: 0 !important;
+    height: fit-content !important;
+    width: 100%;
+}
+
+.inp:focus {
+    box-shadow: none !important;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+    padding: 0 !important;
+    height: fit-content;
+}
+
+.btn {
+    background-color: var(--blue);
+    width: fit-content;
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 18px;
+    border-radius: var(--br);
+}
+
+.btn:hover {
+    background-color: var(--blue-tint);
+}

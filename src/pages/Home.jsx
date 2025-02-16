@@ -11,31 +11,24 @@ import ProjectCard from "../components/ProjectCard";
 import MenuModal from "../components/MenuModal";
 import SettingsModal from "../components/SettingsModal";
 import ProfileModal from "../components/ProfileModal";
+import ProjectEditCard from "../components/ProjectEditCard";
+import Loading from "../components/Loading";
 
 const Home = () => {
     // hooks
-    const { logout } = usePocket();
+    const { 
+        logout,
+        createProject,
+        projects,
+        loading
+     } = usePocket();
+    const profileBtnRef = useRef(null);
     // local state
     const [menuModal, setMenuModal] = useState(false);
     const [profileModal, setProfileModal] = useState(false);
     const [settingsModal, setSettingsModal] = useState(false);
     const [activeProject, setActiveProject] = useState(null);
-    const profileBtnRef = useRef(null);
-
-    const projects = [
-        {
-            title: "project1",
-            id: 0
-        },
-        {
-            title: "project2",
-            id: 1
-        },
-        {
-            title: "project3",
-            id: 2
-        }
-    ]
+    const [newProject, setNewProject] = useState(false);
 
     return (
         <div className='page'>
@@ -68,15 +61,24 @@ const Home = () => {
 
             <div className={styles.projects_container}>
                 <h3>Projects</h3>
-                {projects.map(proj => 
-                    <ProjectCard 
-                        title={proj.title}
-                        id={proj.id}
-                        key={proj.id}
-                        setActiveProject={(id) => setActiveProject(id)} 
-                        isActive={proj.id === activeProject ? true : false} />
-                )}
-                <button className={styles.btn_add_project}>+ Add Project</button>
+                <div className={styles.projects_map}>
+                    {!loading ? projects.map(proj => 
+                        <ProjectCard 
+                            title={proj.title}
+                            id={proj.id}
+                            key={proj.id}
+                            setActiveProject={(id) => setActiveProject(id)} 
+                            isActive={proj.id === activeProject ? true : false} />
+                    ) : <Loading />}
+                    {newProject ? 
+                        <ProjectEditCard
+                        handleSubmit={createProject}
+                        closeCreateProject={() => setNewProject(false)} /> :
+                        <button 
+                        className={styles.btn_add_project}
+                        onClick={() => setNewProject(true)}>+ Add Project</button>
+                    } 
+                </div>
             </div>
         </div>
     );
