@@ -8,19 +8,20 @@ const PbContext = createContext();
 
 export const PbProvider = ({ children }) => {
     // define the pb object 
-    const pb = useMemo(() => new Pocketbase(BASE_URL));
+    const pb = useMemo(() => new Pocketbase(BASE_URL));
 
     // define user
     const [user, setUser] = useState(pb.authStore.record);
     const [token, setToken] = useState(pb.authStore.token);
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [clock, setClock] = useState(user?.work);
 
     useEffect(() => {
         // init projects
         getProjects().then(() => setLoading(false));
 
-        /*pb.collection('projects').subscribe('*', async function (e) { 
+        pb.collection('projects').subscribe('*', async function (e) { 
             setProjects(oldProjects => {
                 // update projects
                 if (e.action === "create") {
@@ -36,18 +37,19 @@ export const PbProvider = ({ children }) => {
                 }
                 return oldProjects;
             });
-        }, {});*/
+        }, {});
         
         // listen for changes to the authStore state
         const unsubscribe = pb.authStore.onChange((token, record) => {
             setUser(record);
             setToken(token);
+            setClock(record.work);
         });
         
         return () => {
             unsubscribe();
         };
-    }, [pb.authStore.record]);
+    }, []);
 
 
     // ========= AUTH ==============
@@ -125,6 +127,23 @@ export const PbProvider = ({ children }) => {
         }
     }
 
+    // ===== TIME =====
+
+    const work = (length) => {
+        const end = Date.now() + length * 1000;
+        
+        const updateTimer = () => {
+            const remaining = Math.max(0, Math.floor((end - Date.now()) / 1000));
+            setClock(remaining);
+        };
+
+        updateTimer();
+
+        const timer = setInterval(updateTimer, 1000);
+
+        return () => clearInterval(timer);
+    }
+
     return (
         <PbContext.Provider value={{ 
             user,
@@ -134,7 +153,9 @@ export const PbProvider = ({ children }) => {
             signup,
             createProject,
             projects,
-            loading
+            loading,
+            work,
+            clock
          }}>
         {children}
         </PbContext.Provider>

@@ -8,8 +8,8 @@ const ProjectEdiCard = ({ handleSubmit, closeCreateProject }) => {
     const [title, setTitle] = useState('');
 
     const handleSubmitClick = async () => {
-        await handleSubmit(title);
         closeCreateProject();
+        await handleSubmit(title);
     }
 
     return (
