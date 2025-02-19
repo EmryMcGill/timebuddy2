@@ -5,12 +5,14 @@ import { useState } from "react";
 // component imports
 import Switch from "./Switch";
 
-const SettingsModal = ({ closeModal }) => {
+const SettingsModal = ({ closeModal, handleSubmit, bkInit, workInit }) => {
     const [autoBreak, setAutoBreak] = useState(false);
+    const [bk, setBk] = useState(bkInit/60);
+    const [work, setWork] = useState(workInit/60);
 
-    const handleDoneClick = () => {
+    const handleDoneClick = async () => {
         // make changes
-        // TODO
+        await handleSubmit(bk*60, work*60, autoBreak);
 
         // close modal
         closeModal();
@@ -18,7 +20,7 @@ const SettingsModal = ({ closeModal }) => {
 
     return (
         <>
-            <div onClick={closeModal} className='overlay'></div>
+            <div onClick={handleDoneClick} className='overlay'></div>
             
             <div className={styles.card}>
                 <h2>Settings</h2>
@@ -27,12 +29,20 @@ const SettingsModal = ({ closeModal }) => {
 
                 <div className={styles.input_container}>
                     <h3>Break</h3>
-                    <input className={styles.inp} type="number" />
+                    <input 
+                        className={styles.inp} 
+                        type="number"
+                        value={bk}
+                        onChange={(e) => setBk(e.target.value)} />
                 </div>
 
                 <div className={styles.input_container}>
                     <h3>Work</h3>
-                    <input className={styles.inp} type="number" />
+                    <input 
+                        className={styles.inp} 
+                        type="number"
+                        value={work}
+                        onChange={(e) => setWork(e.target.value)} />
                 </div>
 
                 <div className={styles.input_container}>

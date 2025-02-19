@@ -22,8 +22,10 @@ const Home = () => {
         projects,
         loading,
         user,
+        updateSettings,
         work,
         stopWork,
+        startBreak,
         clock,
         timer
      } = usePocket();
@@ -35,18 +37,22 @@ const Home = () => {
     const [activeProject, setActiveProject] = useState(null);
     const [newProject, setNewProject] = useState(false);
     const [activeClock, setActiveClock] = useState(null);
+    const [isBreak, setIsBreak] = useState(false);
 
     const formatTime = (time) => {
-        const hours = Math.floor(time / 3600);
-        const minutes = Math.floor((time % 3600) / 60);
+        const minutes = Math.floor(time / 60);
         const seconds = time % 60;
-        return `${hours ? String(hours).padStart(2, '0') + ':' : ''}${minutes ? String(minutes).padStart(2, '0') + ':' : ''}${String(seconds).padStart(2, '0')}`;
+        return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
     }
 
     return (
         <div className='page'>
 
-            {settingsModal ? <SettingsModal closeModal={() => setSettingsModal(false)} /> : ''}
+            {settingsModal ? <SettingsModal 
+                                closeModal={() => setSettingsModal(false)}
+                                handleSubmit={updateSettings}
+                                bkInit={user.break}
+                                workInit={user.work} /> : ''}
             {profileModal ? <ProfileModal 
                                 logout={logout}
                                 closeModal={() =>setProfileModal(false)} /> : ''}
@@ -69,8 +75,17 @@ const Home = () => {
             </div>
 
             <h1 className={styles.timer}>{formatTime(clock)}</h1>
+            
+            {!isBreak ? <button onClick={() => {
+                startBreak(() => setIsBreak());
+                setActiveProject(null);
+                setIsBreak(true);
+            }} className={styles.btn_start}>Start Break</button> : ''}
 
-            <button className={styles.btn_start}>Start Break</button>
+            {isBreak ? <button onClick={() => {
+                setIsBreak(false);
+                stopWork();
+            }} className={styles.btn_start}>End Break</button> : ''}
 
             <div className={styles.projects_container}>
                 <h3>Projects</h3>

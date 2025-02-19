@@ -20,6 +20,10 @@
     border: 2px solid var(--text-primary);
 }
 
+.right_container {
+    display: flex;
+}
+
 .btn_icon {
     display: flex;
     justify-content: center;
@@ -32,4 +36,12 @@
 
 .btn_icon:hover {
     background-color: rgb(236, 236, 236);
+}
+
+.options {
+    visibility: hidden;
+}
+
+.card:hover .options {
+    visibility: visible;
 }

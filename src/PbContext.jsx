@@ -22,6 +22,7 @@ export const PbProvider = ({ children }) => {
         // init projects
         getProjects().then(() => setLoading(false));
 
+        // real-time sub PROJECTS
         pb.collection('projects').subscribe('*', async function (e) { 
             setProjects(oldProjects => {
                 // update projects
@@ -39,6 +40,13 @@ export const PbProvider = ({ children }) => {
                 return oldProjects;
             });
         }, {});
+
+        // real-time sub USER
+        pb.collection('users').subscribe(user.id, (e) => {
+            setUser(e.record);
+            setClock(e.record.work);
+        });
+        
         
         // listen for changes to the authStore state
         const unsubscribe = pb.authStore.onChange((token, record) => {
@@ -98,9 +106,24 @@ export const PbProvider = ({ children }) => {
         }
     }
 
+    // ====== SETTINGS ========
+
+    const updateSettings = async (bk, work, autoBreak) => {
+        try {
+            await pb.collection('users').update(user.id, {
+                break: bk,
+                work: work,
+                autoBreak: autoBreak
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
     // ====== Projects ========
 
-    const getProjects = async () => {
+    const getProjects = async () => {
         try {
             const res = await pb.collection('projects').getFullList();
             setProjects([...res]);
@@ -161,21 +184,52 @@ export const PbProvider = ({ children }) => {
         
         const timer2 = setInterval(updateTimer, 1000);
         setTimer(timer2);
-
-        return () => clearInterval(timer2);
     }
 
     const stopWork = () => {
         // stop the timer
         clearInterval(timer);
+        setTimer(null);
 
         // reset the clock
         setClock(user.work)
     }
 
+    const startBreak = (setIsBreak) => {
+        const length = user.break;
+
+        // need to stop timer
+        clearInterval(timer);
+
+        // start a break timer
+        const end = Date.now() + length * 1000;
+        
+        const updateTimer = () => {
+            const remaining = Math.ceil((end - Date.now()) / 1000); 
+            setClock(remaining);
+
+            if (remaining === 0) {
+                // timer reached 0, stop timer
+                clearInterval(timer2);
+                setTimer(null);
+
+                // set clock back
+                setClock(user.work);
+
+                setIsBreak(false);
+            }
+        };
+
+        updateTimer();
+        
+        const timer2 = setInterval(updateTimer, 1000);
+        setTimer(timer2);
+    }
+
     return (
         <PbContext.Provider value={{ 
             user,
+            updateSettings,
             googleAuth,
             login,
             logout,
@@ -185,6 +239,7 @@ export const PbProvider = ({ children }) => {
             loading,
             work,
             stopWork,
+            startBreak,
             clock,
             timer
          }}>
