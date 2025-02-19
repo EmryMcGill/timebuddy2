@@ -23,7 +23,9 @@ const Home = () => {
         loading,
         user,
         work,
-        clock
+        stopWork,
+        clock,
+        timer
      } = usePocket();
     const profileBtnRef = useRef(null);
     // local state
@@ -32,6 +34,7 @@ const Home = () => {
     const [settingsModal, setSettingsModal] = useState(false);
     const [activeProject, setActiveProject] = useState(null);
     const [newProject, setNewProject] = useState(false);
+    const [activeClock, setActiveClock] = useState(null);
 
     const formatTime = (time) => {
         const hours = Math.floor(time / 3600);
@@ -74,7 +77,8 @@ const Home = () => {
                 <div className={styles.projects_map}>
                     {!loading ? projects.sort((a, b) => new Date(a.created) - new Date(b.created)).map(proj => 
                         <ProjectCard 
-                            handleStart={() => work(user.work)}
+                            handleStart={() => work((p) => setActiveProject(p))}
+                            handleStop={stopWork}
                             title={proj.title}
                             id={proj.id}
                             key={proj.id}

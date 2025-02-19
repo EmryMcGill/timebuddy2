@@ -16,6 +16,7 @@ export const PbProvider = ({ children }) => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [clock, setClock] = useState(user?.work);
+    const [timer, setTimer] = useState(null);
 
     useEffect(() => {
         // init projects
@@ -129,19 +130,47 @@ export const PbProvider = ({ children }) => {
 
     // ===== TIME =====
 
-    const work = (length) => {
+    const work = (setActiveProject) => {
+        const length = user.work;
+
+        // clear any active timer
+        if (timer !== null) {
+            clearInterval(timer);
+        }
+
         const end = Date.now() + length * 1000;
         
         const updateTimer = () => {
-            const remaining = Math.max(0, Math.floor((end - Date.now()) / 1000));
+            const remaining = Math.ceil((end - Date.now()) / 1000); 
             setClock(remaining);
+
+            if (remaining === 0) {
+                // timer reached 0, stop timer
+                clearInterval(timer2);
+                setTimer(null);
+
+                // reset project btn
+                setActiveProject(null);
+
+                // set clock back
+                setClock(length);
+            }
         };
 
         updateTimer();
+        
+        const timer2 = setInterval(updateTimer, 1000);
+        setTimer(timer2);
 
-        const timer = setInterval(updateTimer, 1000);
+        return () => clearInterval(timer2);
+    }
 
-        return () => clearInterval(timer);
+    const stopWork = () => {
+        // stop the timer
+        clearInterval(timer);
+
+        // reset the clock
+        setClock(user.work)
     }
 
     return (
@@ -155,7 +184,9 @@ export const PbProvider = ({ children }) => {
             projects,
             loading,
             work,
-            clock
+            stopWork,
+            clock,
+            timer
          }}>
         {children}
         </PbContext.Provider>
