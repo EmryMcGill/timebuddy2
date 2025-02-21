@@ -19,7 +19,10 @@ const Home = () => {
     const { 
         logout,
         createProject,
+        updateProject,
+        deleteProject,
         projects,
+        createTime,
         loading,
         user,
         updateSettings,
@@ -77,7 +80,7 @@ const Home = () => {
             <h1 className={styles.timer}>{formatTime(clock)}</h1>
             
             {!isBreak ? <button onClick={() => {
-                startBreak(() => setIsBreak());
+                startBreak(() => setIsBreak(), activeProject);
                 setActiveProject(null);
                 setIsBreak(true);
             }} className={styles.btn_start}>Start Break</button> : ''}
@@ -92,13 +95,15 @@ const Home = () => {
                 <div className={styles.projects_map}>
                     {!loading ? projects.sort((a, b) => new Date(a.created) - new Date(b.created)).map(proj => 
                         <ProjectCard 
-                            handleStart={() => work((p) => setActiveProject(p))}
-                            handleStop={stopWork}
+                            handleStart={() => work((p) => setActiveProject(p), proj.id)}
+                            handleStop={() => stopWork(proj.id)}
                             title={proj.title}
                             id={proj.id}
                             key={proj.id}
                             setActiveProject={(id) => setActiveProject(id)} 
-                            isActive={proj.id === activeProject ? true : false} />
+                            isActive={proj.id === activeProject ? true : false}
+                            handleDelete={deleteProject}
+                            handleUpdate={updateProject} />
                     ) : <Loading />}
                     {newProject ? 
                         <ProjectEditCard

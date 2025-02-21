@@ -5,12 +5,28 @@ import { FaPlay } from "react-icons/fa";
 import { FaStop } from "react-icons/fa6";
 import { HiDotsHorizontal } from "react-icons/hi";
 // component imports
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
-const ProjectCard = ({ title, isActive, id, setActiveProject, handleStart, handleStop }) => {
+const ProjectCard = ({ 
+    title, 
+    isActive, 
+    id, 
+    setActiveProject, 
+    handleStart, 
+    handleStop,
+    handleDelete,
+    handleUpdate }) => {
     
     const [titleEdit, setTitleEdit] = useState(title);
     const [edit, setEdit] = useState(false);
+
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (edit && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [edit]);
 
 
     const handleAction = () => {
@@ -19,10 +35,14 @@ const ProjectCard = ({ title, isActive, id, setActiveProject, handleStart, handl
             handleStop();
         }
         else {
-            console.log('start')
             setActiveProject(id);
             handleStart();
         }
+    }
+
+    const handleUpdateClick = async () => {
+        await handleUpdate(id, titleEdit);
+        setEdit(false);
     }
     
     return (
@@ -48,14 +68,21 @@ const ProjectCard = ({ title, isActive, id, setActiveProject, handleStart, handl
             <div className={styles.edit} style={edit ? { display: 'flex' } : {}}>
                 <input 
                     className={styles.inp} 
-                    autoFocus 
                     type="text" 
                     value={titleEdit} 
-                    onChange={(e) => setTitleEdit(e.target.value)} />
+                    onChange={(e) => setTitleEdit(e.target.value)}
+                    ref={inputRef} />
                 <div className={styles.btn_container}>
-                    <button className={styles.btn}>Delete</button>
-                    <button style={{marginLeft: 'auto'}} className={styles.btn}>Cancel</button>
-                    <button className={`${styles.btn} ${styles.btn_save}`}>Save</button>
+                    <button 
+                        className={styles.btn}
+                        onClick={() => handleDelete(id)}>Delete</button>
+                    <button 
+                        style={{marginLeft: 'auto'}} 
+                        className={styles.btn}
+                        onClick={() => setEdit(false)}>Cancel</button>
+                    <button 
+                        className={`${styles.btn} ${styles.btn_save}`}
+                        onClick={handleUpdateClick}>Save</button>
                 </div>
             </div>
         </div>

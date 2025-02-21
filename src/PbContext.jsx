@@ -14,13 +14,15 @@ export const PbProvider = ({ children }) => {
     const [user, setUser] = useState(pb.authStore.record);
     const [token, setToken] = useState(pb.authStore.token);
     const [projects, setProjects] = useState([]);
+    const [time, setTime] = useState([]);
     const [loading, setLoading] = useState(true);
     const [clock, setClock] = useState(user?.work);
     const [timer, setTimer] = useState(null);
 
     useEffect(() => {
-        // init projects
+        // init projects and time
         getProjects().then(() => setLoading(false));
+        getTime();
 
         // real-time sub PROJECTS
         pb.collection('projects').subscribe('*', async function (e) { 
@@ -38,6 +40,17 @@ export const PbProvider = ({ children }) => {
                     return oldProjects.filter(project => project.id !== e.record.id);
                 }
                 return oldProjects;
+            });
+        }, {});
+
+        // real-time sub TIME
+        pb.collection('time').subscribe('*', async function (e) { 
+            setTime(oldTime => {
+                // update time
+                if (e.action === "create") {
+                    return [e.record, ...oldTime];
+                }
+                return oldTime;
             });
         }, {});
 
@@ -151,9 +164,52 @@ export const PbProvider = ({ children }) => {
         }
     }
 
-    // ===== TIME =====
+    const updateProject = async (id, title) => {
+        try {
+            await pb.collection('projects').update(id, {title: title});
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
 
-    const work = (setActiveProject) => {
+    const deleteProject = async (id) => {
+        try {
+            await pb.collection('projects').delete(id);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    // ===== TIME ======
+    
+    const getTime = async () => {
+        try {
+            const res = await pb.collection('time').getFullList();
+            setTime([...res]);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    const createTime = async (time, project) => {
+        try {
+            await pb.collection('time').create({
+                time: time,
+                project: project,
+                user: user.id
+            });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    // ===== CLOCK =====
+
+    const work = (setActiveProject, project) => {
         const length = user.work;
 
         // clear any active timer
@@ -163,12 +219,20 @@ export const PbProvider = ({ children }) => {
 
         const end = Date.now() + length * 1000;
         
-        const updateTimer = () => {
+        const updateTimer = async () => {
             const remaining = Math.ceil((end - Date.now()) / 1000); 
             setClock(remaining);
 
             if (remaining === 0) {
                 // timer reached 0, stop timer
+
+                // create time log
+                await createTime({
+                    time: length,
+                    project: project,
+                    user: user.id
+                });
+
                 clearInterval(timer2);
                 setTimer(null);
 
@@ -186,7 +250,13 @@ export const PbProvider = ({ children }) => {
         setTimer(timer2);
     }
 
-    const stopWork = () => {
+    const stopWork = async (project) => {
+        // create time log
+        await createTime(
+            parseInt(user.work - clock),
+            project,
+        );
+
         // stop the timer
         clearInterval(timer);
         setTimer(null);
@@ -195,7 +265,13 @@ export const PbProvider = ({ children }) => {
         setClock(user.work)
     }
 
-    const startBreak = (setIsBreak) => {
+    const startBreak = async (setIsBreak, project) => {
+        // create time log
+        await createTime(
+            parseInt(user.work - clock),
+            project,
+        );
+        
         const length = user.break;
 
         // need to stop timer
@@ -235,8 +311,12 @@ export const PbProvider = ({ children }) => {
             logout,
             signup,
             createProject,
+            updateProject,
+            deleteProject,
             projects,
             loading,
+            getTime,
+            createTime,
             work,
             stopWork,
             startBreak,

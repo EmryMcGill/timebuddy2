@@ -13,6 +13,6 @@ I made this template to speed up the process of getting a web project up and run
 Im always trying to improve, so if you see anything I can do better please let me know.
 
 ## TODOS:
-- options modal for project card (delete, edit)
-    maybe it makes the card a bit longer, makes the title editable, and makes button on bottom to delete, or submit.
+- refactor start and stop project. One function to stop project and create the time log.
+
     
