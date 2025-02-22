@@ -1,0 +1,24 @@
+.top_container {
+    position: sticky;
+    top:0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem;
+}
+
+.btn_icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: var(--br);
+    width: 3.5rem;
+    height: 3.5rem;
+}
+
+.avatar {
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%;
+}

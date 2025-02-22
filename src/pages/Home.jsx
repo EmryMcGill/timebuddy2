@@ -1,45 +1,32 @@
 //style imports
 import styles from "../styles/Home.module.css";
 // package imports
-import { IoStatsChart } from "react-icons/io5";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 // API imports
 import { usePocket } from "../PbContext"; 
 // component import 
-import defaultAvatar from '../../public/default_avatar.webp'
 import ProjectCard from "../components/ProjectCard";
-import MenuModal from "../components/MenuModal";
-import SettingsModal from "../components/SettingsModal";
-import ProfileModal from "../components/ProfileModal";
 import ProjectEditCard from "../components/ProjectEditCard";
 import Loading from "../components/Loading";
+import TopBar from "../components/TopBar";
 
 const Home = () => {
     // hooks
     const { 
-        logout,
         createProject,
         updateProject,
         deleteProject,
         projects,
-        createTime,
         loading,
-        user,
-        updateSettings,
         work,
         stopWork,
         startBreak,
         clock,
-        timer
      } = usePocket();
-    const profileBtnRef = useRef(null);
+
     // local state
-    const [menuModal, setMenuModal] = useState(false);
-    const [profileModal, setProfileModal] = useState(false);
-    const [settingsModal, setSettingsModal] = useState(false);
     const [activeProject, setActiveProject] = useState(null);
     const [newProject, setNewProject] = useState(false);
-    const [activeClock, setActiveClock] = useState(null);
     const [isBreak, setIsBreak] = useState(false);
 
     const formatTime = (time) => {
@@ -50,32 +37,8 @@ const Home = () => {
 
     return (
         <div className='page'>
-
-            {settingsModal ? <SettingsModal 
-                                closeModal={() => setSettingsModal(false)}
-                                handleSubmit={updateSettings}
-                                bkInit={user.break}
-                                workInit={user.work} /> : ''}
-            {profileModal ? <ProfileModal 
-                                logout={logout}
-                                closeModal={() =>setProfileModal(false)} /> : ''}
             
-            <div className={styles.top_container}>
-                <button className={styles.btn_icon}>
-                    <IoStatsChart size={'2rem'} />
-                </button>
-                
-                <div style={{position: 'relative'}}>
-                    <button onClick={() => setMenuModal(!menuModal)} ref={profileBtnRef} className={styles.btn_icon}>
-                        <img className={styles.avatar} src={defaultAvatar} />
-                    </button>
-                    {menuModal ? <MenuModal 
-                                        buttonRef={profileBtnRef} 
-                                        closeModal={() => setMenuModal(false)}
-                                        openSettingsModal={() => setSettingsModal(true)}
-                                        openProfileModal={() => setProfileModal(true)} /> : ''}
-                </div>
-            </div>
+            <TopBar />
 
             <h1 className={styles.timer}>{formatTime(clock)}</h1>
             

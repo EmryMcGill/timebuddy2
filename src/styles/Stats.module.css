@@ -1,0 +1,24 @@
+.stats_container {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    row-gap: 1rem;
+    width: 80%;
+    border-radius: var(--br);
+    background-color: white;
+    padding: 1rem;
+}
+
+.grid_row {
+    display: contents;
+}
+
+.grid_item {
+    text-align: end;
+    margin-right: 1rem;
+}
+
+.time_bar {
+    background: var(--blue);
+    border-radius: var(--br);
+    height: 100%;
+}
