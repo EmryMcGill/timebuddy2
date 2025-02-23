@@ -57,7 +57,7 @@ const Home = () => {
                     {!loading ? projects.sort((a, b) => new Date(a.created) - new Date(b.created)).map(proj => 
                         <ProjectCard 
                             handleStart={() => startTimer(proj.id)}
-                            handleStop={() => stopTimer}
+                            handleStop={() => stopTimer()}
                             title={proj.title}
                             id={proj.id}
                             key={proj.id} 

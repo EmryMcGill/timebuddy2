@@ -188,6 +188,12 @@ export const PbProvider = ({ children }) => {
     const deleteProject = async (id) => {
         try {
             await pb.collection('projects').delete(id);
+
+            // delete all time logs for this project
+            const logs_to_delete = time.filter(log => log.project === id);
+            logs_to_delete.forEach(async log => {
+                await deleteTime(log.id);
+            })
         }
         catch (err) {
             console.log(err);
@@ -213,6 +219,15 @@ export const PbProvider = ({ children }) => {
                 project: project,
                 user: user.id
             });
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    const deleteTime = async (id) => {
+        try {
+            await pb.collection('time').delete(id);
         }
         catch (err) {
             console.log(err);

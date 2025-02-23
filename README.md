@@ -13,11 +13,9 @@ I made this template to speed up the process of getting a web project up and run
 Im always trying to improve, so if you see anything I can do better please let me know.
 
 ## TODOS:
-- delete all time logs for a project when proj is deleted
 - impliment tab text
 - press enter to update title
 - make the timer not move when its counting
-- refactor start and stop project. One function to stop project and create the time log.
 
 
 ## features to add:
