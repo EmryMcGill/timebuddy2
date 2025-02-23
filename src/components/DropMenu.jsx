@@ -35,8 +35,8 @@ const DropMenu = ({
     return (
         <div className={styles.card} ref={menuRef}>
             <button onClick={() => handleClick('Today')} className={styles.btn}>Today</button>
-            <button onClick={() => handleClick('Week')} className={styles.btn}>Last 7 days</button>
-            <button onClick={() => handleClick('Month')} className={styles.btn}>Last 30 days</button>
+            <button onClick={() => handleClick('Last 7 days')} className={styles.btn}>Last 7 days</button>
+            <button onClick={() => handleClick('Last 30 days')} className={styles.btn}>Last 30 days</button>
         </div>
     );
 }

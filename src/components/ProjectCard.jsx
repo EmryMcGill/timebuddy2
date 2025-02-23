@@ -11,8 +11,7 @@ const ProjectCard = ({
     title, 
     isActive, 
     id, 
-    handleStart, 
-    handleStop,
+    activate,
     handleDelete,
     handleUpdate }) => {
     
@@ -27,16 +26,6 @@ const ProjectCard = ({
         }
     }, [edit]);
 
-
-    const handleAction = () => {
-        if (isActive) {
-            handleStop();
-        }
-        else {
-            handleStart();
-        }
-    }
-
     const handleUpdateClick = async () => {
         await handleUpdate(id, titleEdit);
         setEdit(false);
@@ -44,7 +33,10 @@ const ProjectCard = ({
     
     return (
         <div className={`${styles.card} ${isActive ? styles.card_active : ''}`}>
-            <div className={`${styles.normal}`} style={edit ? { display: 'none' } : {}} >
+            <div 
+                onClick={() => isActive ? activate(null) : activate(id)} 
+                className={`${styles.normal}`} 
+                style={edit ? { display: 'none' } : {}} >
                 <h2>{title}</h2>
                 <div className={styles.right_container}>
                     <div style={{position: 'relative'}}>
@@ -54,11 +46,6 @@ const ProjectCard = ({
                             <HiDotsHorizontal size={'1rem'} />
                         </button>
                     </div>
-                    
-                    <button className={styles.btn_icon} onClick={handleAction}>
-                        {!isActive ? <FaPlay size={'1rem'} /> : '' }
-                        {isActive ? <FaStop size={'1rem'} /> : '' }
-                    </button>
                 </div>
             </div>
 
@@ -68,7 +55,12 @@ const ProjectCard = ({
                     type="text" 
                     value={titleEdit} 
                     onChange={(e) => setTitleEdit(e.target.value)}
-                    ref={inputRef} />
+                    ref={inputRef}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            handleUpdateClick();
+                        }
+                    }} />
                 <div className={styles.btn_container}>
                     <button 
                         className={styles.btn}

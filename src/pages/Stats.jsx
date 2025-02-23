@@ -34,14 +34,14 @@ const Stats = () => {
 
                     return t.project === proj.id && created.toDateString() === today.toDateString();
                 }
-                else if (timeRange === 'Week') {
+                else if (timeRange === 'Last 7 days') {
                     const today = new Date();
                     const cutoff = new Date().setDate(today.getDate() - 7);
                     const created = new Date(t.created);
 
                     return t.project === proj.id && created >= cutoff && created <= today;
                 }
-                else if (timeRange === 'Month') {
+                else if (timeRange === 'Last 30 days') {
                     const today = new Date();
                     const cutoff = new Date().setDate(today.getDate() - 30);
                     const created = new Date(t.created);

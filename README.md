@@ -14,9 +14,10 @@ Im always trying to improve, so if you see anything I can do better please let m
 
 ## TODOS:
 - impliment tab text
-- press enter to update title
 - make the timer not move when its counting
-
+- make the main btn say focus, you can start focus session without a project or by selecting a active project.
+- auto switches to break side when focus session ends
+- circle around clock area, and outline goes with the timer
 
 ## features to add:
 - pause btn

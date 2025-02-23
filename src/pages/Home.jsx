@@ -1,7 +1,7 @@
 //style imports
 import styles from "../styles/Home.module.css";
 // package imports
-import { useState } from "react";
+import { act, useState } from "react";
 // API imports
 import { usePocket } from "../PbContext"; 
 // component import 
@@ -18,15 +18,18 @@ const Home = () => {
         deleteProject,
         projects,
         activeProject,
+        setActiveProjectPublic,
         loading,
         startTimer,
         stopTimer,
         clock,
+        mode,
+        setModePublic,
+        timerActive
      } = usePocket();
 
     // local state
     const [newProject, setNewProject] = useState(false);
-    const [isBreak, setIsBreak] = useState(false);
 
     const formatTime = (time) => {
         const minutes = Math.floor(time / 60);
@@ -34,30 +37,74 @@ const Home = () => {
         return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
     }
 
+    const handleStartFocus = () => {
+        startTimer(true);
+        setIsFocus(true);
+    }
+
+    const handleStopFocus = () => {
+        stopTimer();
+        setIsFocus(false);
+    }
+
     return (
         <div className='page'>
             
             <TopBar />
 
+            <div className={styles.mode_container}>
+                <button 
+                    className={`${styles.btn_mode} ${mode === 'focus' ? styles.btn_mode_active : ''}`}
+                    onClick={() => setModePublic('focus')}
+                    >
+                        Focus
+                </button>
+                <button 
+                    className={`${styles.btn_mode} ${mode === 'break' ? styles.btn_mode_active : ''}`}
+                    onClick={() => setModePublic('break')}
+                    >
+                        Break
+                </button>
+            </div>
+
             <h1 className={styles.timer}>{formatTime(clock)}</h1>
             
-            {!isBreak ? <button onClick={() => {
-                startTimer();
-                setIsBreak(true);
-            }} className={styles.btn_start}>Start Break</button> : ''}
-
-            {isBreak ? <button onClick={() => {
-                setIsBreak(false);
-                stopTimer();
-            }} className={styles.btn_start}>End Break</button> : ''}
+            {mode === 'focus' ?
+                timerActive ? 
+                    <button 
+                        onClick={handleStopFocus} 
+                        className={styles.btn_start}>
+                            End Focus
+                    </button>
+                :
+                    <button 
+                        onClick={handleStartFocus} 
+                        className={styles.btn_start}>
+                            Focus
+                    </button>
+                
+            :
+                timerActive ? 
+                    <button onClick={() => {
+                        setIsBreak(false);
+                        stopTimer();
+                    }} className={styles.btn_start}>End Break</button> 
+                : 
+                    <button onClick={() => {
+                        startTimer();
+                        setIsBreak(true);
+                    }} className={styles.btn_start}>Start Break</button>
+            }
 
             <div className={styles.projects_container}>
                 <h3>Projects</h3>
                 <div className={styles.projects_map}>
                     {!loading ? projects.sort((a, b) => new Date(a.created) - new Date(b.created)).map(proj => 
                         <ProjectCard 
-                            handleStart={() => startTimer(proj.id)}
-                            handleStop={() => stopTimer()}
+                            activate={(id) => {
+                                mode === 'focus' ? handleStopFocus() : '';
+                                setActiveProjectPublic(id);
+                            }}
                             title={proj.title}
                             id={proj.id}
                             key={proj.id} 

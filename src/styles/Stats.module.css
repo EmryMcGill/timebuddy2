@@ -1,5 +1,6 @@
 .time_range_container {
     display: flex;
+    align-items: center;
     gap: 1rem;
     width: 80%;
     margin-bottom: 1rem;

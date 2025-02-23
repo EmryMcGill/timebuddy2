@@ -22,9 +22,12 @@ export const PbProvider = ({ children }) => {
     // to check if the data has loaded
     const [loading, setLoading] = useState(true);
     // value to display on clock
-    const [clock, setClock] = useState(user?.work);
+    const [clock, setClock] = useState(user.work);
     // the timer interval object
     const [timer, setTimer] = useState(null);
+    // focus or break mode
+    const [mode, setMode] = useState('focus');
+    const [timerActive, setTimerActive] = useState(null);
 
     useEffect(() => {
         // init projects and time
@@ -70,7 +73,10 @@ export const PbProvider = ({ children }) => {
         // real-time sub USER
         pb.collection('users').subscribe(user.id, (e) => {
             setUser(e.record);
-            setClock(e.record.work);
+            setMode(oldMode => {
+                setClock(oldMode === 'focus' ? e.record.work : e.record.break);
+                return oldMode;
+            });
         });
         
         
@@ -78,13 +84,21 @@ export const PbProvider = ({ children }) => {
         const unsubscribe = pb.authStore.onChange((token, record) => {
             setUser(record);
             setToken(token);
-            setClock(record.work);
         });
         
         return () => {
             unsubscribe();
         };
     }, []);
+
+    useEffect(() => {
+        if (mode === 'focus') {
+            setClock(user.work);
+        }
+        else {
+            setClock(user.break);
+        }
+    }, [mode]);
 
     // ========= AUTH ==============
 
@@ -105,7 +119,7 @@ export const PbProvider = ({ children }) => {
         }
     }
 
-    const signup = async (data) => {
+    const signup = async (data) => {
         // attempt to register user
         try {
             const res = await pb.collection("users").create(data);
@@ -147,6 +161,10 @@ export const PbProvider = ({ children }) => {
     }
 
     // ====== Projects ========
+
+    const setActiveProjectPublic = (project) => {
+        setActiveProject(project);
+    }
 
     const getProjects = async () => {
         try {
@@ -225,7 +243,7 @@ export const PbProvider = ({ children }) => {
         }
     }
 
-    const deleteTime = async (id) => {
+    const deleteTime = async (id) => {
         try {
             await pb.collection('time').delete(id);
         }
@@ -236,19 +254,26 @@ export const PbProvider = ({ children }) => {
 
     // ===== CLOCK FUNCTIONALITY =====
 
-    // function to start a focus session for the active project
-    const startTimer = async (project) => {
-        // 1. stop any current clock use
-        await stopTimer();
+    const setModePublic = (e) => {
+        setMode(e);
+    }
 
-        // set active project, and calc end time
+    // function to start a focus session for the active project
+    const startTimer = async (focus) => {
+        // 1. stop any current clock use
+        if (timer) {
+            await stopTimer();
+        }
+
+        // calc end time
         let end;
-        setActiveProject(project);
-        if (project) {
+        if (focus) {
             end = Date.now() + user.work * 1000;
+            setTimerActive('focus');
         }
         else {
             end = Date.now() + user.break * 1000;
+            setTimerActive('break');
         }
 
         // 3. updateClock function
@@ -270,18 +295,21 @@ export const PbProvider = ({ children }) => {
 
     // function to clear the timer and create a time log
     const stopTimer = async () => {
+        setTimerActive(null);
         // 1. create a time log
         setClock(prevClock => {
-            setActiveProject(prevProj => {
-                if (prevProj !== null && prevProj !== undefined) {
-                    createTime(
-                        parseInt(user.work - prevClock),
-                        prevProj,
-                    );
-                }
-                return null;
-            });
-            return user.work;
+            if (mode === 'focus') {
+                createTime(
+                    parseInt(user.work - prevClock),
+                    activeProject,
+                );
+                setMode('break');
+                return user.break;
+            }
+            else {
+                setMode('focus');
+                return user.work;
+            }
         });
 
         // 2. stop the interval
@@ -303,6 +331,7 @@ export const PbProvider = ({ children }) => {
             signup,
             projects,
             activeProject,
+            setActiveProjectPublic,
             createProject,
             updateProject,
             deleteProject,
@@ -311,6 +340,9 @@ export const PbProvider = ({ children }) => {
             startTimer,
             stopTimer,
             clock,
+            mode,
+            setModePublic,
+            timerActive
          }}>
         {children}
         </PbContext.Provider>
