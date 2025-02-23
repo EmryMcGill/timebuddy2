@@ -10,19 +10,29 @@ export const PbProvider = ({ children }) => {
     // define the pb object 
     const pb = useMemo(() => new Pocketbase(BASE_URL));
 
-    // define user
+    // define global states
     const [user, setUser] = useState(pb.authStore.record);
     const [token, setToken] = useState(pb.authStore.token);
+    // list of all users projects
     const [projects, setProjects] = useState([]);
+    // the users active project
+    const [activeProject, setActiveProject] = useState(null);
+    // list of all users time logs
     const [time, setTime] = useState([]);
+    // to check if the data has loaded
     const [loading, setLoading] = useState(true);
+    // value to display on clock
     const [clock, setClock] = useState(user?.work);
+    // the timer interval object
     const [timer, setTimer] = useState(null);
 
     useEffect(() => {
         // init projects and time
-        getProjects().then(() => setLoading(false));
-        getTime();
+        getProjects().then(() => 
+            getTime().then(() => 
+                setLoading(false)
+            )
+        );
 
         // real-time sub PROJECTS
         pb.collection('projects').subscribe('*', async function (e) { 
@@ -50,6 +60,9 @@ export const PbProvider = ({ children }) => {
                 if (e.action === "create") {
                     return [e.record, ...oldTime];
                 }
+                if (e.action === "delete") {
+                    return oldTime.filter(t => t.id !== e.record.id);
+                }
                 return oldTime;
             });
         }, {});
@@ -72,7 +85,6 @@ export const PbProvider = ({ children }) => {
             unsubscribe();
         };
     }, []);
-
 
     // ========= AUTH ==============
 
@@ -182,9 +194,9 @@ export const PbProvider = ({ children }) => {
         }
     }
 
-    // ===== TIME ======
+    // ===== TIME LOGS ======
     
-    const getTime = async () => {
+    const getTime = async () => {
         try {
             const res = await pb.collection('time').getFullList();
             setTime([...res]);
@@ -194,7 +206,7 @@ export const PbProvider = ({ children }) => {
         }
     }
 
-    const createTime = async (time, project) => {
+    const createTime = async (time, project) => {
         try {
             await pb.collection('time').create({
                 time: time,
@@ -207,99 +219,63 @@ export const PbProvider = ({ children }) => {
         }
     }
 
-    // ===== CLOCK =====
+    // ===== CLOCK FUNCTIONALITY =====
 
-    const work = (setActiveProject, project) => {
-        const length = user.work;
+    // function to start a focus session for the active project
+    const startTimer = async (project) => {
+        // 1. stop any current clock use
+        await stopTimer();
 
-        // clear any active timer
-        if (timer !== null) {
-            clearInterval(timer);
+        // set active project, and calc end time
+        let end;
+        setActiveProject(project);
+        if (project) {
+            end = Date.now() + user.work * 1000;
+        }
+        else {
+            end = Date.now() + user.break * 1000;
         }
 
-        const end = Date.now() + length * 1000;
-        
-        const updateTimer = async () => {
+        // 3. updateClock function
+        const updateClock = async () => {
             const remaining = Math.ceil((end - Date.now()) / 1000); 
             setClock(remaining);
 
             if (remaining === 0) {
-                // timer reached 0, stop timer
-
-                // create time log
-                await createTime({
-                    time: length,
-                    project: project,
-                    user: user.id
-                });
-
-                clearInterval(timer2);
-                setTimer(null);
-
-                // reset project btn
-                setActiveProject(null);
-
-                // set clock back
-                setClock(length);
+                // end of timer session
+                await stopTimer();
             }
         };
-
-        updateTimer();
+        updateClock();
         
-        const timer2 = setInterval(updateTimer, 1000);
-        setTimer(timer2);
+        // 4. create and start interval
+        const timerLocal = setInterval(updateClock, 1000);
+        setTimer(timerLocal);
     }
 
-    const stopWork = async (project) => {
-        // create time log
-        await createTime(
-            parseInt(user.work - clock),
-            project,
-        );
+    // function to clear the timer and create a time log
+    const stopTimer = async () => {
+        // 1. create a time log
+        setClock(prevClock => {
+            setActiveProject(prevProj => {
+                if (prevProj !== null && prevProj !== undefined) {
+                    createTime(
+                        parseInt(user.work - prevClock),
+                        prevProj,
+                    );
+                }
+                return null;
+            });
+            return user.work;
+        });
 
-        // stop the timer
-        clearInterval(timer);
-        setTimer(null);
-
-        // reset the clock
-        setClock(user.work)
-    }
-
-    const startBreak = async (setIsBreak, project) => {
-        // create time log
-        await createTime(
-            parseInt(user.work - clock),
-            project,
-        );
-        
-        const length = user.break;
-
-        // need to stop timer
-        clearInterval(timer);
-
-        // start a break timer
-        const end = Date.now() + length * 1000;
-        
-        const updateTimer = () => {
-            const remaining = Math.ceil((end - Date.now()) / 1000); 
-            setClock(remaining);
-
-            if (remaining === 0) {
-                // timer reached 0, stop timer
-                clearInterval(timer2);
-                setTimer(null);
-
-                // set clock back
-                setClock(user.work);
-
-                setIsBreak(false);
+        // 2. stop the interval
+        setTimer(prevTimer => {
+            if (prevTimer !== null) {
+                clearInterval(prevTimer);
             }
-        };
-
-        updateTimer();
-        
-        const timer2 = setInterval(updateTimer, 1000);
-        setTimer(timer2);
+            return null;
+        });
     }
 
     return (
@@ -310,17 +286,16 @@ export const PbProvider = ({ children }) => {
             login,
             logout,
             signup,
+            projects,
+            activeProject,
             createProject,
             updateProject,
             deleteProject,
-            projects,
-            loading,
             time,
-            work,
-            stopWork,
-            startBreak,
+            loading,
+            startTimer,
+            stopTimer,
             clock,
-            timer
          }}>
         {children}
         </PbContext.Provider>

@@ -1,32 +1,55 @@
 //style imports
 import styles from "../styles/Stats.module.css";
+import { IoIosArrowDown } from "react-icons/io";
 // API imports
 import { usePocket } from "../PbContext"; 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // component imports
 import TopBar from "../components/TopBar";
+import DropMenu from "../components/DropMenu";
 
 const Stats = () => {
     // hooks
     const { 
-        logout,
         projects,
         time,
-        loading,
-        user,
-        updateSettings,
      } = usePocket();
+     const dropRef = useRef();
 
      // local state
      const [maxTime, setMaxTime] = useState();
      const [projectTimes, setProjectTimes] = useState({});
+     const [drop, setDrop] = useState(false);
+     const [timeRange, setTimeRange] = useState('Today');
 
      useEffect(() => {
         // create the project time list
         let projectTimesLocal = {};
         projects.forEach(proj => {
             projectTimesLocal[proj.id] = 0;
-            const times = time.filter(t => t.project === proj.id);
+            const times = time.filter(t => {
+                if (timeRange === 'Today') {
+                    const today = new Date();
+                    const created = new Date(t.created);
+
+                    return t.project === proj.id && created.toDateString() === today.toDateString();
+                }
+                else if (timeRange === 'Week') {
+                    const today = new Date();
+                    const cutoff = new Date().setDate(today.getDate() - 7);
+                    const created = new Date(t.created);
+
+                    return t.project === proj.id && created >= cutoff && created <= today;
+                }
+                else if (timeRange === 'Month') {
+                    const today = new Date();
+                    const cutoff = new Date().setDate(today.getDate() - 30);
+                    const created = new Date(t.created);
+
+                    return t.project === proj.id && created >= cutoff && created <= today;
+                }
+                return t.project === proj.id
+            });
             times.forEach(t => projectTimesLocal[proj.id] += t.time);
         });
 
@@ -37,15 +60,33 @@ const Stats = () => {
         }));
 
         // find the largest time
-        const m = Math.max(...totalTimeArray.map(t => t.time))
-        setMaxTime(m);
+        let m = Math.max(...totalTimeArray.map(t => t.time));
+        // round to next hour
+        m = Math.ceil(m / 3600);
+        
+        if (m === 0) {
+            m = 1;
+        }
+
+        setMaxTime(m * 3600);
         setProjectTimes(projectTimesLocal);
-    }, [time]);
+    }, [time, timeRange]);
 
     // render
     return (
         <div className="page">
             <TopBar />
+
+            <div className={styles.time_range_container}>
+            <h2>Time Range</h2>
+            <div style={{position: 'relative'}}>
+                <button ref={dropRef} onClick={() => setDrop(!drop)} className={styles.btn_drop}>{timeRange} <IoIosArrowDown /></button>
+                {drop ? <DropMenu
+                            closeModal={() => setDrop(!drop)}
+                            buttonRef={dropRef}
+                            setTimeRange={(e) => setTimeRange(e)} /> : ''}
+                </div>
+            </div>
 
             <div className={styles.stats_container}>
                 {projects.map((proj, index) => (

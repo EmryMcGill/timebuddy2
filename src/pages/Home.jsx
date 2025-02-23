@@ -17,15 +17,14 @@ const Home = () => {
         updateProject,
         deleteProject,
         projects,
+        activeProject,
         loading,
-        work,
-        stopWork,
-        startBreak,
+        startTimer,
+        stopTimer,
         clock,
      } = usePocket();
 
     // local state
-    const [activeProject, setActiveProject] = useState(null);
     const [newProject, setNewProject] = useState(false);
     const [isBreak, setIsBreak] = useState(false);
 
@@ -43,14 +42,13 @@ const Home = () => {
             <h1 className={styles.timer}>{formatTime(clock)}</h1>
             
             {!isBreak ? <button onClick={() => {
-                startBreak(() => setIsBreak(), activeProject);
-                setActiveProject(null);
+                startTimer();
                 setIsBreak(true);
             }} className={styles.btn_start}>Start Break</button> : ''}
 
             {isBreak ? <button onClick={() => {
                 setIsBreak(false);
-                stopWork();
+                stopTimer();
             }} className={styles.btn_start}>End Break</button> : ''}
 
             <div className={styles.projects_container}>
@@ -58,12 +56,11 @@ const Home = () => {
                 <div className={styles.projects_map}>
                     {!loading ? projects.sort((a, b) => new Date(a.created) - new Date(b.created)).map(proj => 
                         <ProjectCard 
-                            handleStart={() => work((p) => setActiveProject(p), proj.id)}
-                            handleStop={() => stopWork(proj.id)}
+                            handleStart={() => startTimer(proj.id)}
+                            handleStop={() => stopTimer}
                             title={proj.title}
                             id={proj.id}
-                            key={proj.id}
-                            setActiveProject={(id) => setActiveProject(id)} 
+                            key={proj.id} 
                             isActive={proj.id === activeProject ? true : false}
                             handleDelete={deleteProject}
                             handleUpdate={updateProject} />

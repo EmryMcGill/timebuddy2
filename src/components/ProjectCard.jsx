@@ -11,7 +11,6 @@ const ProjectCard = ({
     title, 
     isActive, 
     id, 
-    setActiveProject, 
     handleStart, 
     handleStop,
     handleDelete,
@@ -31,11 +30,9 @@ const ProjectCard = ({
 
     const handleAction = () => {
         if (isActive) {
-            setActiveProject(null);
             handleStop();
         }
         else {
-            setActiveProject(id);
             handleStart();
         }
     }
