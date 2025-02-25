@@ -1,3 +1,27 @@
+.timer_container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    border: 2px solid var(--text-primary);
+    z-index: 0;
+}
+
+.timer_container::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(var(--col) var(--progress, 0), transparent var(--progress, 0));
+    -webkit-mask: radial-gradient(circle, transparent 67%, black 67%);
+    mask: radial-gradient(circle, transparent 67%, black 67%);
+    pointer-events: none;
+}
+
 .mode_container {
     display: flex;
     gap: 1rem;
@@ -13,14 +37,17 @@
 }
 
 .timer {
+    display: inline-block;
     margin-right: auto;
     margin-left: auto;
     font-size: 96px;
     font-weight: 350 !important;
+    width: 4.5ch;
+    text-align: center;
 }
 
 .btn_start {
-    background-color: var(--blue);
+    background-color: var(--col);
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
@@ -30,10 +57,11 @@
     padding-right: 1rem;
     font-size: 20px;
     border-radius: var(--br);
+    color: var(--text-col);
 }
 
 .btn_start:hover {
-    background-color: var(--blue-tint);
+    background-color: var(--col);
 }
 
 .projects_container {

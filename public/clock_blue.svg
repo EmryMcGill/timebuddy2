@@ -1,0 +1,11 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+	<title>clock</title>
+	<defs>
+		<image  width="24" height="24" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYAQMAAADaua+7AAAAAXNSR0IB2cksfwAAAAZQTFRFAAAANabvTy96MgAAAAJ0Uk5TAP9bkSK1AAAAGklEQVR4nGO0P/CXsb7hP+N/BgaqYpCZQLMBUMsb+d5YyyEAAAAASUVORK5CYII="/>
+	</defs>
+	<style>
+		.s0 { fill: none;stroke: #4a5568;stroke-linecap: round;stroke-linejoin: round;stroke-width: 2 } 
+	</style>
+	<use id="img1" href="#img1" x="0" y="0"/>
+	<path class="s0" d="m21 12c0 5-4 9-9 9-5 0-9-4-9-9 0-5 4-9 9-9 5 0 9 4 9 9zm-9-4v4l3 3"/>
+</svg>

@@ -13,6 +13,8 @@ const Stats = () => {
     const { 
         projects,
         time,
+        mode,
+        clock
      } = usePocket();
      const dropRef = useRef();
 
@@ -71,6 +73,21 @@ const Stats = () => {
         setMaxTime(m * 3600);
         setProjectTimes(projectTimesLocal);
     }, [time, timeRange]);
+
+    useEffect(() => {
+        if (mode === 'focus') {
+            document.title = `${formatTime(clock)} - Focus`;
+        }
+        else {
+            document.title = `${formatTime(clock)} - Break`;
+        }
+     });
+
+    const formatTime = (time) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = time % 60;
+        return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+    }
 
     // render
     return (

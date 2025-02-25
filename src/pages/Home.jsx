@@ -1,7 +1,7 @@
 //style imports
 import styles from "../styles/Home.module.css";
 // package imports
-import { act, useState } from "react";
+import { act, useEffect, useRef, useState } from "react";
 // API imports
 import { usePocket } from "../PbContext"; 
 // component import 
@@ -9,10 +9,14 @@ import ProjectCard from "../components/ProjectCard";
 import ProjectEditCard from "../components/ProjectEditCard";
 import Loading from "../components/Loading";
 import TopBar from "../components/TopBar";
+import clock_yellow from '../../public/clock_yellow.svg';
+import clock_blue from '../../public/clock_blue.svg';
+import clock_white from '../../public/clock.svg';
 
 const Home = () => {
     // hooks
     const { 
+        user,
         createProject,
         updateProject,
         deleteProject,
@@ -22,11 +26,57 @@ const Home = () => {
         loading,
         startTimer,
         stopTimer,
+        pauseTimer,
         clock,
         mode,
         setModePublic,
         timerActive
      } = usePocket();
+
+     const timerContainerRef = useRef();
+     const btnRef = useRef();
+
+     useEffect(() => {
+        let progress;
+        if (mode === 'focus') {
+            document.title = `${formatTime(clock)} - Focus`;
+            progress = Math.min((user.work - clock) / user.work * 360, 360);
+
+            if (timerActive) {
+                let link = document.querySelector("link[rel~='icon']");
+                link.href = clock_yellow;
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+        }
+        else {
+            document.title = `${formatTime(clock)} - Break`;
+            progress = Math.min((user.break - clock) / user.break * 360, 360);
+
+            if (timerActive) {
+                let link = document.querySelector("link[rel~='icon']");
+                link.href = clock_blue;
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+        }
+
+        if (!timerActive) {
+            let link = document.querySelector("link[rel~='icon']");
+            link.href = clock_white;
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+
+        timerContainerRef.current.style.setProperty('--progress', `${progress}deg`);
+        if (mode === 'focus') {
+            timerContainerRef.current.style.setProperty('--col', 'var(--blue)');
+            btnRef.current.style.setProperty('--col', 'var(--blue)');
+            btnRef.current.style.setProperty('--text-col', 'var(--text-primary)');
+        }
+        else {
+            timerContainerRef.current.style.setProperty('--col', '#35A6EF');
+            btnRef.current.style.setProperty('--col', '#35A6EF');
+            btnRef.current.style.setProperty('--text-col', 'white');
+        }
+    }, [clock]);
 
     // local state
     const [newProject, setNewProject] = useState(false);
@@ -37,14 +87,17 @@ const Home = () => {
         return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
     }
 
-    const handleStartFocus = () => {
-        startTimer(true);
-        setIsFocus(true);
-    }
-
-    const handleStopFocus = () => {
+    const handleSwitchMode = () => {
+        // stop timer
         stopTimer();
-        setIsFocus(false);
+        if (mode === 'focus') {
+            // change mode
+            setModePublic('break');
+        }
+        else {
+            // change mode
+            setModePublic('focus');   
+        }
     }
 
     return (
@@ -52,49 +105,70 @@ const Home = () => {
             
             <TopBar />
 
-            <div className={styles.mode_container}>
-                <button 
-                    className={`${styles.btn_mode} ${mode === 'focus' ? styles.btn_mode_active : ''}`}
-                    onClick={() => setModePublic('focus')}
-                    >
-                        Focus
-                </button>
-                <button 
-                    className={`${styles.btn_mode} ${mode === 'break' ? styles.btn_mode_active : ''}`}
-                    onClick={() => setModePublic('break')}
-                    >
-                        Break
-                </button>
-            </div>
-
-            <h1 className={styles.timer}>{formatTime(clock)}</h1>
-            
-            {mode === 'focus' ?
-                timerActive ? 
+            <div className={styles.timer_container} ref={timerContainerRef}>
+                <div className={styles.mode_container}>
                     <button 
-                        onClick={handleStopFocus} 
-                        className={styles.btn_start}>
-                            End Focus
-                    </button>
-                :
-                    <button 
-                        onClick={handleStartFocus} 
-                        className={styles.btn_start}>
+                        className={`${styles.btn_mode} ${mode === 'focus' ? styles.btn_mode_active : ''}`}
+                        onClick={handleSwitchMode}
+                        >
                             Focus
                     </button>
-                
-            :
-                timerActive ? 
-                    <button onClick={() => {
-                        setIsBreak(false);
-                        stopTimer();
-                    }} className={styles.btn_start}>End Break</button> 
-                : 
-                    <button onClick={() => {
-                        startTimer();
-                        setIsBreak(true);
-                    }} className={styles.btn_start}>Start Break</button>
-            }
+                    <button 
+                        className={`${styles.btn_mode} ${mode === 'break' ? styles.btn_mode_active : ''}`}
+                        onClick={handleSwitchMode}
+                        >
+                            Break
+                    </button>
+                </div>
+
+                <h1 className={styles.timer}>{formatTime(clock)}</h1>
+
+                {mode === 'focus' ?
+                    timerActive ? 
+                    <>
+                        <button 
+                            onClick={() => stopTimer()} 
+                            className={styles.btn_start}
+                            ref={btnRef}>
+                                End Focus
+                        </button>
+                        <button
+                            onClick={() => pauseTimer()}
+                            className={styles.btn_start}
+                            ref={btnRef}>
+                                Pause
+                        </button>
+                    </>
+                    :
+                        <button 
+                            onClick={() => startTimer(true)} 
+                            className={styles.btn_start}
+                            ref={btnRef}>
+                                Focus
+                        </button>
+                    
+                :
+                    timerActive ? 
+                        <>
+                            <button onClick={stopTimer} className={styles.btn_start}>End Break</button> 
+                            <button
+                                onClick={() => pauseTimer()}
+                                className={styles.btn_start}
+                                ref={btnRef}>
+                                    Pause
+                            </button>
+                        </>
+                    : 
+                        <button 
+                            onClick={startTimer} 
+                            className={styles.btn_start}
+                            ref={btnRef}>
+                                Start Break
+                        </button>
+                }
+            </div>
+
+            
 
             <div className={styles.projects_container}>
                 <h3>Projects</h3>
@@ -102,7 +176,7 @@ const Home = () => {
                     {!loading ? projects.sort((a, b) => new Date(a.created) - new Date(b.created)).map(proj => 
                         <ProjectCard 
                             activate={(id) => {
-                                mode === 'focus' ? handleStopFocus() : '';
+                                mode === 'focus' ? stopTimer() : '';
                                 setActiveProjectPublic(id);
                             }}
                             title={proj.title}

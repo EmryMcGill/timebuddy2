@@ -268,11 +268,11 @@ export const PbProvider = ({ children }) => {
         // calc end time
         let end;
         if (focus) {
-            end = Date.now() + user.work * 1000;
+            end = Date.now() + clock * 1000;
             setTimerActive('focus');
         }
         else {
-            end = Date.now() + user.break * 1000;
+            end = Date.now() + clock * 1000;
             setTimerActive('break');
         }
 
@@ -284,6 +284,13 @@ export const PbProvider = ({ children }) => {
             if (remaining === 0) {
                 // end of timer session
                 await stopTimer();
+
+                if (mode === 'focus') {
+                    setMode('break');
+                }
+                else {
+                    setMode('focus');
+                }
             }
         };
         updateClock();
@@ -303,12 +310,10 @@ export const PbProvider = ({ children }) => {
                     parseInt(user.work - prevClock),
                     activeProject,
                 );
-                setMode('break');
-                return user.break;
+                return user.work;
             }
             else {
-                setMode('focus');
-                return user.work;
+                return user.break;
             }
         });
 
@@ -319,6 +324,12 @@ export const PbProvider = ({ children }) => {
             }
             return null;
         });
+    }
+
+    const pauseTimer = async () => {
+        setTimerActive(null);
+        clearInterval(timer);
+        setTimer(null);
     }
 
     return (
@@ -339,6 +350,7 @@ export const PbProvider = ({ children }) => {
             loading,
             startTimer,
             stopTimer,
+            pauseTimer,
             clock,
             mode,
             setModePublic,

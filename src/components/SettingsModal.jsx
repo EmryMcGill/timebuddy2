@@ -28,21 +28,21 @@ const SettingsModal = ({ closeModal, handleSubmit, bkInit, workInit }) => {
                 <h3 style={{fontWeight: "600"}}>Timer (minutes)</h3>
 
                 <div className={styles.input_container}>
-                    <h3>Break</h3>
-                    <input 
-                        className={styles.inp} 
-                        type="number"
-                        value={bk}
-                        onChange={(e) => setBk(e.target.value)} />
-                </div>
-
-                <div className={styles.input_container}>
                     <h3>Work</h3>
                     <input 
                         className={styles.inp} 
                         type="number"
                         value={work}
                         onChange={(e) => setWork(e.target.value)} />
+                </div>
+
+                <div className={styles.input_container}>
+                    <h3>Break</h3>
+                    <input 
+                        className={styles.inp} 
+                        type="number"
+                        value={bk}
+                        onChange={(e) => setBk(e.target.value)} />
                 </div>
 
                 <div className={styles.input_container}>

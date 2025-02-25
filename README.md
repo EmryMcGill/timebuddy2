@@ -13,11 +13,7 @@ I made this template to speed up the process of getting a web project up and run
 Im always trying to improve, so if you see anything I can do better please let me know.
 
 ## TODOS:
-- impliment tab text
-- make the timer not move when its counting
-- make the main btn say focus, you can start focus session without a project or by selecting a active project.
-- auto switches to break side when focus session ends
-- circle around clock area, and outline goes with the timer
+- add pause btn for focus and break
 
 ## features to add:
 - pause btn
