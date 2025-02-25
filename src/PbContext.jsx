@@ -29,6 +29,8 @@ export const PbProvider = ({ children }) => {
     const [mode, setMode] = useState('focus');
     const [timerActive, setTimerActive] = useState(null);
 
+    const [audio] = useState(new Audio('../public/alarm.mov'))
+
     useEffect(() => {
         // init projects and time
         getProjects().then(() => 
@@ -282,6 +284,7 @@ export const PbProvider = ({ children }) => {
             setClock(remaining);
 
             if (remaining === 0) {
+                audio.play();
                 // end of timer session
                 await stopTimer();
 

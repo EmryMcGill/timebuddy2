@@ -46,8 +46,16 @@
     text-align: center;
 }
 
-.btn_start {
-    background-color: var(--col);
+.btn_container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn_focus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--blue);
     width: fit-content;
     margin-left: auto;
     margin-right: auto;
@@ -57,11 +65,30 @@
     padding-right: 1rem;
     font-size: 20px;
     border-radius: var(--br);
-    color: var(--text-col);
+    color: var(--text-primary);
+}
+.btn_focus:hover {
+    background-color: var(--blue-tint);
 }
 
-.btn_start:hover {
-    background-color: var(--col);
+.btn_break {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-size: 20px;
+    border-radius: var(--br);
+    background-color: #35A6EF;
+    color: white;
+}
+.btn_break:hover {
+    background-color: #349be0;
 }
 
 .projects_container {

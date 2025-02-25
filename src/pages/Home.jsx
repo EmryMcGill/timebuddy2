@@ -2,6 +2,7 @@
 import styles from "../styles/Home.module.css";
 // package imports
 import { act, useEffect, useRef, useState } from "react";
+import { GiPauseButton } from "react-icons/gi";
 // API imports
 import { usePocket } from "../PbContext"; 
 // component import 
@@ -68,13 +69,9 @@ const Home = () => {
         timerContainerRef.current.style.setProperty('--progress', `${progress}deg`);
         if (mode === 'focus') {
             timerContainerRef.current.style.setProperty('--col', 'var(--blue)');
-            btnRef.current.style.setProperty('--col', 'var(--blue)');
-            btnRef.current.style.setProperty('--text-col', 'var(--text-primary)');
         }
         else {
             timerContainerRef.current.style.setProperty('--col', '#35A6EF');
-            btnRef.current.style.setProperty('--col', '#35A6EF');
-            btnRef.current.style.setProperty('--text-col', 'white');
         }
     }, [clock]);
 
@@ -125,45 +122,52 @@ const Home = () => {
 
                 {mode === 'focus' ?
                     timerActive ? 
-                    <>
+                    <div className={styles.btn_container}>
+                        <button
+                            onClick={() => pauseTimer()}
+                            className={styles.btn_focus}
+                            style={{paddingLeft: '0.5rem', paddingRight: '0.5rem'}}
+                            ref={btnRef}>
+                                <GiPauseButton />
+                        </button>
                         <button 
                             onClick={() => stopTimer()} 
-                            className={styles.btn_start}
+                            className={styles.btn_focus}
                             ref={btnRef}>
                                 End Focus
                         </button>
-                        <button
-                            onClick={() => pauseTimer()}
-                            className={styles.btn_start}
-                            ref={btnRef}>
-                                Pause
-                        </button>
-                    </>
+                    </div>
                     :
                         <button 
                             onClick={() => startTimer(true)} 
-                            className={styles.btn_start}
+                            className={styles.btn_focus}
                             ref={btnRef}>
                                 Focus
                         </button>
                     
                 :
                     timerActive ? 
-                        <>
-                            <button onClick={stopTimer} className={styles.btn_start}>End Break</button> 
+                        <div className={styles.btn_container}>
                             <button
                                 onClick={() => pauseTimer()}
-                                className={styles.btn_start}
+                                className={styles.btn_break}
+                                style={{paddingLeft: '0.5rem', paddingRight: '0.5rem'}}
                                 ref={btnRef}>
-                                    Pause
+                                    <GiPauseButton />
                             </button>
-                        </>
+                            <button 
+                                onClick={stopTimer} 
+                                className={styles.btn_break}
+                                ref={btnRef}>
+                                    End Break
+                            </button> 
+                        </div>
                     : 
                         <button 
                             onClick={startTimer} 
-                            className={styles.btn_start}
+                            className={styles.btn_break}
                             ref={btnRef}>
-                                Start Break
+                                Break
                         </button>
                 }
             </div>
