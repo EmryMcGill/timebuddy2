@@ -55,6 +55,33 @@ const Stats = () => {
             times.forEach(t => projectTimesLocal[proj.id] += t.time);
         });
 
+        // get uncategorized time
+        projectTimesLocal['uncat'] = 0;
+        const times = time.filter(t => {
+            if (timeRange === 'Today') {
+                const today = new Date();
+                const created = new Date(t.created);
+
+                return t.project === null && created.toDateString() === today.toDateString();
+            }
+            else if (timeRange === 'Last 7 days') {
+                const today = new Date();
+                const cutoff = new Date().setDate(today.getDate() - 7);
+                const created = new Date(t.created);
+
+                return t.project === null && created >= cutoff && created <= today;
+            }
+            else if (timeRange === 'Last 30 days') {
+                const today = new Date();
+                const cutoff = new Date().setDate(today.getDate() - 30);
+                const created = new Date(t.created);
+
+                return t.project === null && created >= cutoff && created <= today;
+            }
+            return t.project === null
+        });
+        times.forEach(t => projectTimesLocal['uncat'] += t.time);
+
         // conver to array
         const totalTimeArray = Object.entries(projectTimesLocal).map(([project, time]) => ({
             project,
@@ -72,6 +99,7 @@ const Stats = () => {
 
         setMaxTime(m * 3600);
         setProjectTimes(projectTimesLocal);
+        
     }, [time, timeRange]);
 
     useEffect(() => {
@@ -121,6 +149,19 @@ const Stats = () => {
                         </h2>
                     </div>
                 ))}
+                    <div className={styles.grid_row}>
+                        <div className={styles.grid_item}>
+                            <h2>Uncategorized</h2>
+                        </div>
+                        <div 
+                            className={styles.time_bar} 
+                            style={{width: `${projectTimes['uncat'] / maxTime * 100}%`}}></div>
+                        <h2 style={{marginLeft: '1rem'}}>
+                            {projectTimes['uncat'] >= 3600 ? Math.floor(projectTimes['uncat'] / 3600) + ' hr ' : ''}
+                            {projectTimes['uncat'] >= 60 ? Math.floor((projectTimes['uncat'] % 3600) / 60) + ' min ' : ''}
+                            {projectTimes['uncat'] < 60 ? Math.floor(projectTimes['uncat'] % 60) + ' sec ' : ''}
+                        </h2>
+                    </div>
             </div>
         </div>
     );

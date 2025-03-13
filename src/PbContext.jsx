@@ -22,7 +22,7 @@ export const PbProvider = ({ children }) => {
     // to check if the data has loaded
     const [loading, setLoading] = useState(true);
     // value to display on clock
-    const [clock, setClock] = useState(user.work);
+    const [clock, setClock] = useState(user?.work);
     // the timer interval object
     const [timer, setTimer] = useState(null);
     // focus or break mode
@@ -73,7 +73,7 @@ export const PbProvider = ({ children }) => {
         }, {});
 
         // real-time sub USER
-        pb.collection('users').subscribe(user.id, (e) => {
+        pb.collection('users').subscribe(user?.id, (e) => {
             setUser(e.record);
             setMode(oldMode => {
                 setClock(oldMode === 'focus' ? e.record.work : e.record.break);
@@ -95,10 +95,10 @@ export const PbProvider = ({ children }) => {
 
     useEffect(() => {
         if (mode === 'focus') {
-            setClock(user.work);
+            setClock(user?.work);
         }
         else {
-            setClock(user.break);
+            setClock(user?.break);
         }
     }, [mode]);
 
@@ -283,7 +283,7 @@ export const PbProvider = ({ children }) => {
             const remaining = Math.ceil((end - Date.now()) / 1000); 
             setClock(remaining);
 
-            if (remaining === 0) {
+            if (remaining <= 0) {
                 audio.play();
                 // end of timer session
                 await stopTimer();

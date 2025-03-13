@@ -44,6 +44,7 @@
     font-weight: 350 !important;
     width: 4.5ch;
     text-align: center;
+    font-variant-numeric: tabular-nums;
 }
 
 .btn_container {
@@ -66,6 +67,7 @@
     font-size: 20px;
     border-radius: var(--br);
     color: var(--text-primary);
+    text-wrap: nowrap;
 }
 .btn_focus:hover {
     background-color: var(--blue-tint);
@@ -86,6 +88,7 @@
     border-radius: var(--br);
     background-color: #35A6EF;
     color: white;
+    text-wrap: nowrap;
 }
 .btn_break:hover {
     background-color: #349be0;

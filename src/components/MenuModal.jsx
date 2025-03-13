@@ -4,13 +4,15 @@ import styles from "../styles/MenuModal.module.css";
 import { CgProfile } from "react-icons/cg";
 import { PiCrownSimpleFill } from "react-icons/pi";
 import { IoSettingsSharp } from "react-icons/io5";
+import { FiLogOut } from "react-icons/fi";
 import { useRef, useEffect } from "react";
 
 const MenuModal = ({ 
     closeModal, 
     buttonRef, 
     openSettingsModal, 
-    openProfileModal }) => {
+    openProfileModal,
+    logout }) => {
 
     const menuRef = useRef(null);
 
@@ -42,9 +44,9 @@ const MenuModal = ({
 
     return (
         <div className={styles.card} ref={menuRef}>
-            <button onClick={handleProfileClick} className={styles.btn}><CgProfile /> Account</button>
-            <button className={styles.btn}><PiCrownSimpleFill /> Premium</button>
+            {/*<button className={styles.btn}><PiCrownSimpleFill /> Premium</button>*/}
             <button onClick={handleSettingsClick} className={styles.btn}><IoSettingsSharp /> Settings</button>
+            <button onClick={logout} className={styles.btn}><FiLogOut /> Logout</button>
         </div>
     );
 }

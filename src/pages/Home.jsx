@@ -126,7 +126,7 @@ const Home = () => {
                         <button
                             onClick={() => pauseTimer()}
                             className={styles.btn_focus}
-                            style={{paddingLeft: '0.5rem', paddingRight: '0.5rem'}}
+                            style={{aspectRatio: '1 / 1', paddingLeft: '0.5rem', paddingRight: '0.5rem'}}
                             ref={btnRef}>
                                 <GiPauseButton />
                         </button>
@@ -151,7 +151,7 @@ const Home = () => {
                             <button
                                 onClick={() => pauseTimer()}
                                 className={styles.btn_break}
-                                style={{paddingLeft: '0.5rem', paddingRight: '0.5rem'}}
+                                style={{aspectRatio: '1 / 1', paddingLeft: '0.5rem', paddingRight: '0.5rem'}}
                                 ref={btnRef}>
                                     <GiPauseButton />
                             </button>

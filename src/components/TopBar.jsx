@@ -5,10 +5,10 @@ import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useLocation } from 'react-router-dom';
 import { FaRegClock } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
 // API imports
 import { usePocket } from "../PbContext"; 
 // component imports
-import defaultAvatar from '../../public/default_avatar.webp'
 import MenuModal from "../components/MenuModal";
 import SettingsModal from "../components/SettingsModal";
 import ProfileModal from "../components/ProfileModal";
@@ -51,13 +51,19 @@ const TopBar = () => {
             }  
             <div style={{position: 'relative'}}>
                 <button onClick={() => setMenuModal(!menuModal)} ref={profileBtnRef} className={styles.btn_icon}>
-                    <img className={styles.avatar} src={defaultAvatar} />
+                    <CgProfile size={'2rem'} />
                 </button>
-                {menuModal ? <MenuModal 
-                                    buttonRef={profileBtnRef} 
-                                    closeModal={() => setMenuModal(false)}
-                                    openSettingsModal={() => setSettingsModal(true)}
-                                    openProfileModal={() => setProfileModal(true)} /> : ''}
+                {menuModal ? 
+                    <MenuModal 
+                        buttonRef={profileBtnRef} 
+                        closeModal={() => setMenuModal(false)}
+                        openSettingsModal={() => setSettingsModal(true)}
+                        openProfileModal={() => setProfileModal(true)} 
+                        logout={logout}
+                    />
+                : 
+                    ''
+                }
             </div>
         </div>
     );

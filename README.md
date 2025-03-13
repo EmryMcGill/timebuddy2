@@ -13,9 +13,9 @@ I made this template to speed up the process of getting a web project up and run
 Im always trying to improve, so if you see anything I can do better please let me know.
 
 ## TODOS:
-- add pause btn for focus and break
+- bug: fix the time format / location thing UTP ... local...
+- add total time in stats
+- bug: fix uncat time
 
 ## features to add:
-- pause btn
-
-    
+- sort stats by day, week, month. then you can tab over the days/weeks... to see yesterday...
