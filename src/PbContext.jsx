@@ -21,12 +21,12 @@ export const PbProvider = ({ children }) => {
     const [time, setTime] = useState([]);
     // to check if the data has loaded
     const [loading, setLoading] = useState(true);
+    // focus or break mode
+    const [mode, setMode] = useState('focus');
     // value to display on clock
     const [clock, setClock] = useState(user?.work);
     // the timer interval object
     const [timer, setTimer] = useState(null);
-    // focus or break mode
-    const [mode, setMode] = useState('focus');
     const [timerActive, setTimerActive] = useState(null);
 
     const [audio] = useState(new Audio('../public/alarm.mov'))
@@ -73,25 +73,49 @@ export const PbProvider = ({ children }) => {
         }, {});
 
         // real-time sub USER
-        pb.collection('users').subscribe(user?.id, (e) => {
-            setUser(e.record);
-            setMode(oldMode => {
-                setClock(oldMode === 'focus' ? e.record.work : e.record.break);
-                return oldMode;
+        if (user) {
+            pb.collection('users').subscribe(user?.id, (e) => {
+                setUser(e.record);
+                setMode(oldMode => {
+                    setClock(oldMode === 'focus' ? e.record.work : e.record.break);
+                    return oldMode;
+                });
             });
-        });
-        
+        }
         
         // listen for changes to the authStore state
         const unsubscribe = pb.authStore.onChange((token, record) => {
             setUser(record);
             setToken(token);
         });
+
+        //check if user is logged in and refresh token
+        const validateAuth = async () => {
+            if (pb.authStore.isValid) {
+                try {
+                    await pb.collection('users').authRefresh();
+                    console.log('auth token refreshed');
+                } catch (err) {
+                    console.error('Token refresh failed. logging out', err);
+                    logout();
+                }
+            }
+            else {
+                console.log('logout')
+                logout();
+            }
+        }
+
+        // call validate auth every 5 min
+        const refreshInterval = setInterval(async () => {
+            await validateAuth();
+        }, 5 * 60 * 1000);
         
         return () => {
             unsubscribe();
+            clearInterval(refreshInterval);
         };
-    }, []);
+    }, [user]);
 
     useEffect(() => {
         if (mode === 'focus') {
@@ -113,6 +137,8 @@ export const PbProvider = ({ children }) => {
         try {
             await pb.collection("users").authWithPassword(email, pass);
             setUser(pb.authStore.record);
+            setClock(pb.authStore.record.work);
+            setMode('focus');
             return null;
         }
         catch (err) {

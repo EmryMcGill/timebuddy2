@@ -53,7 +53,7 @@ const Login = () => {
                 <h1>Time Buddy</h1>
                 <div className={`card`}>
                     <h2 style={{width: "100%"}}>Login</h2>
-                    <button className={`${styles.btn_google} btn_large`}>
+                    {/* <button className={`${styles.btn_google} btn_large`}>
                         Continue with Google
                     </button>
 
@@ -61,7 +61,7 @@ const Login = () => {
                         <hr />
                         <p>or</p>
                         <hr />
-                    </div>
+                    </div> */}
 
                     <form onSubmit={handleSubmit} className={styles.form} action="">
                         <label htmlFor="email" className="input_label">Email address</label>

@@ -62,7 +62,7 @@ const Signup = () => {
                 <div className={`card`}>
                     <h2 style={{width: "100%"}}>Sign up</h2>
                     
-                    <button onClick={googleAuth} className={`${styles.btn_google} btn_large`}>
+                    {/* <button onClick={googleAuth} className={`${styles.btn_google} btn_large`}>
                         Continue with Google
                     </button>
 
@@ -70,7 +70,7 @@ const Signup = () => {
                         <hr />
                         <p>or</p>
                         <hr />
-                    </div>
+                    </div> */}
 
                     <form onSubmit={handleSubmit} className={styles.form} action="">
                         <label htmlFor="email" className="input_label">Email address</label>
