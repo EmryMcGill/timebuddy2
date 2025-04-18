@@ -1,7 +1,7 @@
 //style imports
 import styles from "../styles/Home.module.css";
 // package imports
-import { act, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GiPauseButton } from "react-icons/gi";
 // API imports
 import { usePocket } from "../PbContext"; 
